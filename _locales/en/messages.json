@@ -1,0 +1,20 @@
+{
+  "extensionName": {
+    "message": "Quick Filter By"
+  },
+  "extensionDescription": {
+    "message": "A simple extension that sets the Quick Filter based on the selected message fields"
+  },
+  "recipient": {
+    "message": "First Recipient"
+  },
+  "recipients": {
+    "message": "All Recipients"
+  },
+  "sender": {
+    "message": "Sender"
+  },
+  "subject": {
+    "message": "Subject"
+  }
+}
