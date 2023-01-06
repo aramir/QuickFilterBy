@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "3",
+  "version": "4",
   "applications": {
     "gecko": {
       "id": "quickfilterby@extensions.thunderbird.net",
@@ -14,6 +14,25 @@
     "scripts": [
       "background.js"
     ]
+  },
+  "experiment_apis": {
+    "MessagesListAdapter": {
+      "schema": "api/MessagesListAdapter/schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "MessagesListAdapter"
+          ]
+        ],
+        "script": "api/MessagesListAdapter/implementation.js",
+        "events": [
+          "startup"
+        ]
+      }
+    }
   },
   "permissions": [
     "menus",

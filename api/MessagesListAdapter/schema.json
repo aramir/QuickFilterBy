@@ -1,0 +1,18 @@
+[
+  {
+    "namespace": "MessagesListAdapter",
+    "functions": [
+      {
+        "name": "initWindow",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          }
+        ]
+      }
+    ]
+  }
+]

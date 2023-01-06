@@ -63,3 +63,15 @@ browser.menus.onShown.addListener((info) => {
   browser.menus.update("subject", { visible: oneMessage });
   browser.menus.refresh();
 });
+
+async function main() {
+  const windows = await messenger.windows.getAll();
+  for (let window of windows) {
+    await messenger.MessagesListAdapter.initWindow(window.id);
+  }
+  messenger.windows.onCreated.addListener((window) => {
+    messenger.MessagesListAdapter.initWindow(window.id);
+  });
+}
+
+main();
