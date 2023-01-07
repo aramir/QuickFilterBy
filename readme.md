@@ -1,8 +1,8 @@
 ## Quick Filter By
 
 Mozilla Thunderbird extension that that adds a "Quick Filter By" messages list context menu which greatly speeds up 
-creation of a Quick Filter for the most common use cases. Supports filtering by Sender, Recipient and a 
-Subject line.
+creation of a Quick Filter for the most common use cases. 
 
-> Note: this is, essentially, a modification of a [sample extension](https://github.com/thundernest/sample-extensions/tree/master/filter). 
-> I've removed a menu item entry and rearranged context menu a bit. **All credit goes to the original authors.**
+Supports filtering by sender, recipient and a subject text either via a context menu or simply by alt-clicking on on of those fields right in the messages list.
+
+> The above functinality mimicks "quick filtering" from TheBat! e-mail client.
