@@ -63,13 +63,12 @@
       let row = cell.row;
       let col = cell.col;
       let cellText = box.view.getCellText(row, col);
-      setFilter(win.QuickFilterBarMuxer.maybeActiveFilterer, col.id, cellText)
-      win.QuickFilterBarMuxer._showFilterBar(true);
-      win.QuickFilterBarMuxer.deferredUpdateSearch();
+      setQuickFilter(win, col.id, cellText)
     }
   }
 
-  function setFilter(filter, mode, value) {
+  function setQuickFilter(win, mode, value) {
+    let filter = win.QuickFilterBarMuxer.maybeActiveFilterer;
     if (!filter) return;
     if (mode != COL_RECIPIENT && mode != COL_SENDER && mode != COL_SUBJECT) return;
     filter.filterValues.text.text = value;
@@ -77,6 +76,8 @@
     filter.filterValues.text.states.recipients = (mode == COL_RECIPIENT);
     filter.filterValues.text.states.sender = (mode == COL_SENDER);
     filter.filterValues.text.states.subject = (mode == COL_SUBJECT);
+    win.QuickFilterBarMuxer._showFilterBar(true);
+    win.QuickFilterBarMuxer.deferredUpdateSearch();
   }
 
   // Export the api by assigning in to the exports parameter of the anonymous closure
