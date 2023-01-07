@@ -3,11 +3,12 @@
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "4",
+  "version": "5",
   "applications": {
     "gecko": {
       "id": "quickfilterby@extensions.thunderbird.net",
-      "strict_min_version": "76.0a1"
+      "strict_min_version": "76.0a1",
+      "strict_max_version": "110.0"
     }
   },
   "background": {

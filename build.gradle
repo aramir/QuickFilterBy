@@ -3,6 +3,7 @@ task build(type: Zip) {
 	include '*.js'
 	include '*.json'
 	include '_locales/**'
+	include 'api/**'
 	archiveName 'QuickFilterBy.xpi'
 	destinationDir(file('/dist/'))
 }

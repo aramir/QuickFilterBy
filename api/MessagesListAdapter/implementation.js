@@ -3,6 +3,10 @@
 // Using a closure to not leak anything but the API to the outside world.
 (function (exports) {
 
+  const COL_SENDER = "senderCol";
+  const COL_RECIPIENT = "recipientCol";
+  const COL_SUBJECT = "subjectCol";
+
   // Get various parts of the WebExtension framework that we need.
   var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
   var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
@@ -67,11 +71,12 @@
 
   function setFilter(filter, mode, value) {
     if (!filter) return;
+    if (mode != COL_RECIPIENT && mode != COL_SENDER && mode != COL_SUBJECT) return;
     filter.filterValues.text.text = value;
     filter.filterValues.text.states.body = false;
-    filter.filterValues.text.states.recipients = (mode == "recepientCol");
-    filter.filterValues.text.states.sender = (mode == "senderCol");
-    filter.filterValues.text.states.subject = (mode == "subjectCol");
+    filter.filterValues.text.states.recipients = (mode == COL_RECIPIENT);
+    filter.filterValues.text.states.sender = (mode == COL_SENDER);
+    filter.filterValues.text.states.subject = (mode == COL_SUBJECT);
   }
 
   // Export the api by assigning in to the exports parameter of the anonymous closure
