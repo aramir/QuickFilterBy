@@ -3,17 +3,11 @@
 // Using a closure to not leak anything but the API to the outside world.
 (function (exports) {
 
-  const COL_SENDER = "senderCol";
-  const COL_RECIPIENT = "recipientCol";
-  const COL_SUBJECT = "subjectCol";
-
   // Get various parts of the WebExtension framework that we need.
   var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
-  var Services = globalThis.Services || ChromeUtils.import(
-    "resource://gre/modules/Services.jsm"
-  ).Services;
 
   const listenerThreadPanes = new Set();
+  const messageListListener = new ExtensionCommon.EventEmitter();
 
   class MessagesListAdapter extends ExtensionCommon.ExtensionAPI {
     onStartup() {
@@ -26,28 +20,42 @@
       }
       //removing previously set onClick listeners
       for (const threadPane of listenerThreadPanes.values()) {
-        threadPane.removeEventListener("click", onMessageListClick, true);
+        if (threadPane) {
+          threadPane.treeTable.removeEventListener("click", onMessageListClick, true);
+        }
       }
       // Flush all caches
       Services.obs.notifyObservers(null, "startupcache-invalidate");
     }
 
+
     getAPI(context) {
       return {
         MessagesListAdapter: {
-          initWindow: async function (windowId) {
-            //console.log("QFB: MessagesListAdapter Window Init")
-            let win = context.extension.windowManager.get(windowId).window;
-            let type = win.document.documentElement.getAttribute('windowtype');
-            if (!["mail:3pane", "mailnews:virtualFolderList"].includes(type)) {
-              return;
-            }
-            if (type == 'mail:3pane') {
-              let threadPane = win.document.getElementById("threadTree");
-              if (threadPane) {
-                threadPane.addEventListener("click", onMessageListClick,true);
-                listenerThreadPanes.add(threadPane);
+          onMessageListClick: new ExtensionCommon.EventManager({
+            context,
+            name: "MessagesListAdapter.onMessageListClick",
+            register(fire) {
+              function callback(event, columnName, columnText) {
+                return fire.async(columnName, columnText);
               }
+              messageListListener.on("messagelist-clicked", callback);
+              return function () {
+                messageListListener.off("messagelist-clicked", callback);
+              };
+            },
+          }).api(),
+
+          initTab: async function (tabId) {
+            let { nativeTab } = context.extension.tabManager.get(tabId);
+            let about3PaneWindow = getAbout3PaneWindow(nativeTab);
+            if (!about3PaneWindow) {
+              return
+            }
+            let threadPane = about3PaneWindow.threadPane
+            if (threadPane) {
+              threadPane.treeTable.addEventListener("click", onMessageListClick, true);
+              listenerThreadPanes.add(threadPane);
             }
           }
         },
@@ -55,31 +63,33 @@
     }
   };
 
-  function onMessageListClick(event) {
-    if (event.button == 0 && event.altKey) {
-      let win = (event.view || event.currentTarget.ownerDocument.defaultView);
-      let target = event.composedTarget;
-      if (!target) return;
-      let box = target.parentNode;
-      let cell = box.getCellAt(event.clientX, event.clientY); // row => 1755, col => { id : 'sizeCol', columns : array }
-      let row = cell.row;
-      let col = cell.col;
-      let cellText = box.view.getCellText(row, col);
-      setQuickFilter(win, col.id, cellText)
+  function getAbout3PaneWindow(nativeTab) {
+    if (nativeTab.mode && nativeTab.mode.name == "mail3PaneTab") {
+      return nativeTab.chromeBrowser.contentWindow
     }
+    return null;
   }
 
-  function setQuickFilter(win, mode, value) {
-    let filter = win.QuickFilterBarMuxer.maybeActiveFilterer;
-    if (!filter) return;
-    if (mode != COL_RECIPIENT && mode != COL_SENDER && mode != COL_SUBJECT) return;
-    filter.filterValues.text.text = value;
-    filter.filterValues.text.states.body = false;
-    filter.filterValues.text.states.recipients = (mode == COL_RECIPIENT);
-    filter.filterValues.text.states.sender = (mode == COL_SENDER);
-    filter.filterValues.text.states.subject = (mode == COL_SUBJECT);
-    win.QuickFilterBarMuxer._showFilterBar(true);
-    win.QuickFilterBarMuxer.deferredUpdateSearch();
+  function onMessageListClick(event) {
+    if (event.button == 0 && event.altKey) {
+      // We do not use the window/tab, but rely on setQuickfilter updating the
+      // currently displayed tab, if no tab is specified.
+      // let win = (event.view || event.currentTarget.ownerDocument.defaultView);
+      
+      let target = event.composedTarget;
+      if (!target) return;
+
+      let box = target.closest("td");
+      let columnName = [...box.classList.values()].find(e => e.endsWith("-column"))
+      let columnText = box.title || box.textContent;
+
+      if (columnName) {
+        // Let us forward the information back to the WebExtension through a
+        // WebExtension event, so that the background can use the mailTabs API
+        // to set the quickfilter.
+        messageListListener.emit("messagelist-clicked", columnName, columnText);
+      }
+    }
   }
 
   // Export the api by assigning in to the exports parameter of the anonymous closure

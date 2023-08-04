@@ -1,14 +1,30 @@
 [
   {
     "namespace": "MessagesListAdapter",
+    "events": [
+      {
+        "name": "onMessageListClick",
+        "type": "function",
+        "parameters": [
+          {
+            "name": "columnName",
+            "type": "string"
+          },
+          {
+            "name": "columnText",
+            "type": "string"
+          }
+        ]
+      }
+    ],
     "functions": [
       {
-        "name": "initWindow",
+        "name": "initTab",
         "type": "function",
         "async": true,
         "parameters": [
           {
-            "name": "windowId",
+            "name": "tabId",
             "type": "integer"
           }
         ]
