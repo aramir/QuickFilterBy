@@ -64,14 +64,29 @@ browser.menus.onShown.addListener((info) => {
   browser.menus.refresh();
 });
 
+browser.MessagesListAdapter.onMessageListClick.addListener((columnName, columnText) => {
+  // Our event forwards the raw column names. But since this add-on maintaines
+  // the Experiment, it does not really matter where we have to adjust the column
+  // names if core changes them.
+  browser.mailTabs.setQuickFilter({
+    text: {
+      text: columnText,
+      subject: columnName == "subjectcol-column",
+      recipients: columnName == "recipientcol-column",
+      author: columnName == "sendercol-column"
+    },
+  })
+});
+
 async function main() {
-  const windows = await messenger.windows.getAll();
-  for (let window of windows) {
-    await messenger.MessagesListAdapter.initWindow(window.id);
-  }
-  messenger.windows.onCreated.addListener((window) => {
-    messenger.MessagesListAdapter.initWindow(window.id);
+  messenger.tabs.onCreated.addListener((tab) => {
+    messenger.MessagesListAdapter.initTab(tab.id);
   });
+  
+  let tabs = await browser.tabs.query({})
+  for (let tab of tabs) {
+    messenger.MessagesListAdapter.initTab(tab.id);
+  }
 }
 
 main();

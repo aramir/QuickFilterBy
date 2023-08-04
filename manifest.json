@@ -7,8 +7,8 @@
   "applications": {
     "gecko": {
       "id": "quickfilterby@extensions.thunderbird.net",
-      "strict_min_version": "76.0a1",
-      "strict_max_version": "110.0"
+      "strict_min_version": "115.0",
+      "strict_max_version": "118.*"
     }
   },
   "background": {
