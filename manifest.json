@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "7",
+  "version": "8",
   "applications": {
     "gecko": {
       "id": "quickfilterby@extensions.thunderbird.net",
