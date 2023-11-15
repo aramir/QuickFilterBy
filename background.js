@@ -65,7 +65,7 @@ browser.menus.onShown.addListener((info) => {
 });
 
 browser.MessagesListAdapter.onMessageListClick.addListener((columnName, columnText) => {
-  // Our event forwards the raw column names. But since this add-on maintaines
+  // Our event forwards the raw column names. But since this add-on maintains
   // the Experiment, it does not really matter where we have to adjust the column
   // names if core changes them.
   browser.mailTabs.setQuickFilter({
@@ -73,7 +73,7 @@ browser.MessagesListAdapter.onMessageListClick.addListener((columnName, columnTe
       text: columnText,
       subject: columnName == "subjectcol-column",
       recipients: columnName == "recipientcol-column",
-      author: columnName == "sendercol-column"
+      author: (columnName == "sendercol-column" || columnName == "correspondentcol-column")
     },
   })
 });
