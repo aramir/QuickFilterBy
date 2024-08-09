@@ -1,10 +1,9 @@
 "use strict";
 
+/* globals ExtensionCommon, Services */
+
 // Using a closure to not leak anything but the API to the outside world.
 (function (exports) {
-
-  // Get various parts of the WebExtension framework that we need.
-  var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
 
   const listenerThreadPanes = new Set();
   const messageListListener = new ExtensionCommon.EventEmitter();
