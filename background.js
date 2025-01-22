@@ -13,6 +13,25 @@ browser.menus.create({
   },
 });
 browser.menus.create({
+  id: "senderEmail",
+  title: browser.i18n.getMessage("senderEmail"),
+  contexts: ["message_list"],
+  async onclick(info) {
+    let message = info.selectedMessages.messages[0];
+    //extracting email only, if name is present
+    let author = message.author;
+    if (author.indexOf("<") > 0 && author.indexOf(">") > 0) {
+      author = author.substring(author.indexOf("<") + 1, author.lastIndexOf(">"));
+    }
+    await browser.mailTabs.setQuickFilter({
+      text: {
+        text: author,
+        author: true,
+      },
+    });
+  },
+});
+browser.menus.create({
   id: "recipient",
   title: browser.i18n.getMessage("recipient"),
   contexts: ["message_list"],
@@ -58,6 +77,7 @@ browser.menus.create({
 browser.menus.onShown.addListener((info) => {
   let oneMessage = info.selectedMessages && info.selectedMessages.messages.length == 1;
   browser.menus.update("sender", { visible: oneMessage });
+  browser.menus.update("senderEmail", { visible: oneMessage });
   browser.menus.update("recipient", { visible: oneMessage });
   browser.menus.update("recipients", { visible: oneMessage });
   browser.menus.update("subject", { visible: oneMessage });
