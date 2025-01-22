@@ -14,6 +14,9 @@
   "sender": {
     "message": "Sender"
   },
+  "senderEmail": {
+    "message": "Sender (E-Mail)"
+  },
   "subject": {
     "message": "Subject"
   }

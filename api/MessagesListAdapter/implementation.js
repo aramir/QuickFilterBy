@@ -85,7 +85,7 @@
       if (columnName) {
         // Let us forward the information back to the WebExtension through a
         // WebExtension event, so that the background can use the mailTabs API
-        // to set the quickfilter.
+        // to set the quick filter.
         messageListListener.emit("messagelist-clicked", columnName, columnText);
       }
     }
